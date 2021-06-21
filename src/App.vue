@@ -77,6 +77,7 @@
                   {{ user.username }}
                 </li>
               </ul>
+              <Whiteboard />
               <div class="content border">
                 <div class="chat-messages">
                   <p v-for="msg in messages">
@@ -109,6 +110,7 @@
 </template>
 
 <script>
+import Whiteboard from "./components/whiteboard.vue";
 export default {
   name: "App",
   data() {
@@ -123,7 +125,9 @@ export default {
       messages: [],
     };
   },
-  components: {},
+  components: {
+    Whiteboard,
+  },
   methods: {
     create() {
       var name = this.createname;
@@ -149,6 +153,8 @@ export default {
       });
     },
   },
+  mounted() {},
+  updated() {},
   sockets: {
     connect() {
       console.log("Connected to the socket server.");
@@ -167,8 +173,6 @@ export default {
     },
     message(msg) {
       this.messages.push(msg);
-      var container = this.$refs.yourRef;
-      container.scrollTop = container.scrollHeight;
     },
   },
 };

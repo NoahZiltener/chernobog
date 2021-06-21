@@ -50,6 +50,21 @@ io.on('connection', (socket) => {
 		io.to(user.room).emit('message', { user, message });
 	});
 
+	socket.on('drawing', (data) => {
+		const user = getCurrentUser(socket.id);
+		socket.to(user.room).broadcast.emit('drawing', data)
+	});
+
+	socket.on('started', (data) => {
+		const user = getCurrentUser(socket.id);
+		socket.to(user.room).broadcast.emit('started', data)
+	});
+
+	socket.on('stoped', (data) => {
+		const user = getCurrentUser(socket.id);
+		socket.to(user.room).broadcast.emit('stoped', data)
+	});
+
 	socket.on('disconnect', () => {
 		const user = userLeave(socket.id);
 
