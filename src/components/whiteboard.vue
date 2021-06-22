@@ -46,6 +46,7 @@ export default {
     },
     onFinishedPainting() {
       this.onpainting = false;
+      console.log("onFinishedPainting");
       this.ctx.beginPath();
     },
     draw(e) {
@@ -86,16 +87,16 @@ export default {
   },
   sockets: {
     drawing(e) {
-      console.log(e);
+      console.log("draw");
       this.ondraw(e.x, e.l, e.y, e.t);
     },
     started(e) {
-      console.log(e);
+      console.log("start");
       this.onStartPainting(e.x, e.l, e.y, e.t);
     },
     stoped() {
       console.log("Stoped");
-      this.onFinishedPainting;
+      this.onFinishedPainting();
     },
   },
 };
