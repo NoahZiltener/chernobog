@@ -77,9 +77,19 @@
                   {{ user.username }}
                 </li>
               </ul>
+              <h3 v-if="showWord">Word: {{ word }}</h3>
               <Whiteboard />
+              <div v-if="choosing">
+                <b-button
+                  class="word"
+                  v-for="word in words"
+                  v-on:click="choose(word)"
+                  type="is-primary"
+                  >{{ word }}</b-button
+                >
+              </div>
               <div class="content border">
-                <div class="chat-messages">
+                <div id="chat" class="chat-messages">
                   <p v-for="msg in messages">
                     {{ msg.user.username }}: {{ msg.message }}
                   </p>
@@ -123,6 +133,10 @@ export default {
       started: false,
       message: "",
       messages: [],
+      choosing: false,
+      words: [],
+      word: "",
+      showWord: false,
     };
   },
   components: {
@@ -147,14 +161,18 @@ export default {
       this.$socket.client.emit("send", message);
       this.message = "";
     },
-    updated() {
-      this.$nextTick(function() {
-        console.log("Test");
-      });
+    choose(word) {
+      this.word = word;
+      this.showWord = true;
+      this.$socket.client.emit("choosed", word);
+      this.choosing = false;
     },
   },
   mounted() {},
-  updated() {},
+  updated() {
+    var objDiv = document.getElementById("chat");
+    objDiv.scrollTop = objDiv.scrollHeight;
+  },
   sockets: {
     connect() {
       console.log("Connected to the socket server.");
@@ -174,6 +192,13 @@ export default {
     message(msg) {
       this.messages.push(msg);
     },
+    choose(words) {
+      this.choosing = true;
+      this.words = words;
+    },
+    guessed() {
+      this.showWord = false;
+    },
   },
 };
 </script>
@@ -191,5 +216,8 @@ export default {
 
 .border {
   border-top: solid lightgrey;
+}
+.word {
+  margin: 10px;
 }
 </style>

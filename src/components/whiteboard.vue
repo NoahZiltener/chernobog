@@ -1,8 +1,8 @@
 <template>
   <div>
     <canvas
-      width="400"
-      height="400"
+      width="350"
+      height="350"
       @mousedown="startPainting"
       @mouseup="finishedPainting"
       @mousemove="draw"
@@ -80,6 +80,11 @@ export default {
       this.ctx.beginPath();
       this.ctx.moveTo(x - l, y - t);
     },
+    erase() {
+      let w = this.canvas.width;
+      let h = this.canvas.height;
+      this.ctx.clearRect(0, 0, w, h);
+    },
   },
   mounted() {
     this.canvas = document.getElementById("canvas");
@@ -97,6 +102,10 @@ export default {
     stoped() {
       console.log("Stoped");
       this.onFinishedPainting();
+    },
+    erase() {
+      console.log("erase");
+      this.erase();
     },
   },
 };

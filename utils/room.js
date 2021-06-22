@@ -1,16 +1,16 @@
 const rooms = [];
 
-function createRoom(id, drawer) {
-    const room = { id, drawer };
+function createRoom(id, drawer, word) {
+    const room = { id, drawer, word };
     rooms.push(room);
     return room;
 }
 
-function getRoomUsers(roomid) {
+function getRoom(roomid) {
     return rooms.filter(room => room.id === roomid);
 }
 
 module.exports = {
     createRoom,
-    getRoomUsers
+    getRoom
 }

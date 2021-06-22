@@ -1,7 +1,7 @@
 const users = [];
 
-function userJoin(id, username, room, isAdmin) {
-    const user = { id, username, room, isAdmin };
+function userJoin(id, username, room, isAdmin, draw) {
+    const user = { id, username, room, isAdmin, draw };
     users.push(user);
     return user;
 }
@@ -23,6 +23,7 @@ function getRoomUsers(room) {
 }
 
 module.exports = {
+    users,
     userJoin,
     getCurrentUser,
     userLeave,

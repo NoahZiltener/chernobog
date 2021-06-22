@@ -1,12 +1,15 @@
 const express = require('express')
 const port = process.env.PORT || 3000
-const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/user')
-const { createRoom } = require('./utils/room')
+const { users, userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./utils/user')
+const { createRoom, getRoom } = require('./utils/room')
 
 var app = require('express')()
 var http = require('http').Server(app)
 var io = require('socket.io')(http)
 var v4 = require('uuid');
+
+var words = ["Baum", "Haus", "Mensch"]
+var word = ""
 
 app.use(express.static(__dirname + '/dist'))
 app.get(/.*/, (req, res) => {
@@ -27,9 +30,8 @@ io.on('connection', (socket) => {
 			isAdmin = true;
 		}
 
-		const user = userJoin(socket.id, name, room, isAdmin)
+		const user = userJoin(socket.id, name, room, isAdmin, false)
 		socket.join(user.room)
-		createRoom(user.room, 0);
 
 		socket.emit('joined', user);
 
@@ -41,13 +43,32 @@ io.on('connection', (socket) => {
 	socket.on('start', ({ user }) => {
 		if (user.isAdmin) {
 			io.to(user.room).emit('started', true);
+
+
+			io.to(user.id).emit('choose', words)
 		}
 	});
 
 	socket.on('send', message => {
 		const user = getCurrentUser(socket.id);
 
-		io.to(user.room).emit('message', { user, message });
+		if (message == word) {
+			message = `has guest the right word. It was ${message} `
+			io.to(user.room).emit('erase');
+			io.to(user.room).emit('message',
+				{ user, message }
+			);
+			io.to(user.id).emit('choose', words)
+			io.to(user.room).emit('guessed');
+		}
+		else {
+			io.to(user.room).emit('message', { user, message });
+		}
+
+	});
+
+	socket.on('choosed', (data) => {
+		word = data;
 	});
 
 	socket.on('drawing', (data) => {
@@ -75,3 +96,18 @@ io.on('connection', (socket) => {
 		}
 	});
 })
+
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getIndex(oldindex, user) {
+	let index = 0;
+	do {
+		index = getRandomInt(0, users.filter(u => u.draw == false && u.room == user.room).length)
+
+	} while (index == oldindex);
+	return index;
+}
