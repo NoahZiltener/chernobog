@@ -21,10 +21,12 @@ export default {
       onpainting: false,
       canvas: null,
       ctx: null,
+      isDrawing: false,
     };
   },
   methods: {
     startPainting(e) {
+      if (!this.isDrawing) return;
       this.painting = true;
 
       let rect = this.canvas.getBoundingClientRect();
@@ -40,6 +42,7 @@ export default {
       this.ondraw(x, l, y, t);
     },
     finishedPainting() {
+      if (!this.isDrawing) return;
       this.painting = false;
       this.ctx.beginPath();
       this.$socket.client.emit("stoped", false);
@@ -50,6 +53,7 @@ export default {
       this.ctx.beginPath();
     },
     draw(e) {
+      if (!this.isDrawing) return;
       if (!this.painting) return;
 
       this.ctx.lineWidth = 10;
@@ -106,6 +110,12 @@ export default {
     erase() {
       console.log("erase");
       this.erase();
+    },
+    isdrawing() {
+      this.isDrawing = true;
+    },
+    stopdrawing() {
+      this.isDrawing = false;
     },
   },
 };

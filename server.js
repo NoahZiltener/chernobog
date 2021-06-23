@@ -60,6 +60,7 @@ io.on('connection', (socket) => {
 			);
 			io.to(user.id).emit('choose', words)
 			io.to(user.room).emit('guessed');
+			io.to(user.room).emit('stopdrawing');
 		}
 		else {
 			io.to(user.room).emit('message', { user, message });
@@ -69,6 +70,8 @@ io.on('connection', (socket) => {
 
 	socket.on('choosed', (data) => {
 		word = data;
+		const user = getCurrentUser(socket.id);
+		io.to(user.id).emit('isdrawing');
 	});
 
 	socket.on('drawing', (data) => {
